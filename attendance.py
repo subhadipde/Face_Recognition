@@ -38,6 +38,9 @@ class Attendance:
         self.date = StringVar()
         self.time = StringVar()
         self.status = StringVar()
+        self.filter_com = StringVar()
+        self.filter_entry = StringVar()
+
      
         # bg image
         img3=Image.open(r"images\bgimg.jpg")
@@ -163,6 +166,34 @@ class Attendance:
                                corner_radius=10)
         Right_frame.place(relx=0.56, rely=0.5, anchor=W)
 
+
+        # ====================== filter system =====================================
+        filter_label=ctk.CTkLabel(Right_frame, text="Filter By: ")
+        filter_label.configure(font=("Lato",14))
+        filter_label.place(relx=0.2, rely=0.1, anchor=CENTER)
+
+        filter_combo=ttk.Combobox(Right_frame,
+                                    textvariable=self.filter_com,
+                                    font=("times new roman",12,"bold"),
+                                    state="readonly",
+                                    width=10)
+        filter_combo["values"]=("Select", "Roll No","Date")
+        filter_combo.current(0)
+        filter_combo.place(relx=0.4, rely=0.1, anchor=CENTER)
+
+        filter_entry = ctk.CTkEntry(Right_frame,
+                                    textvariable=self.filter_entry,
+                                    placeholder_text="Enter here",
+                                    width=200,
+                                    height=40,
+                                    border_width=1,
+                                    corner_radius=10)
+        filter_entry.place(relx=0.7, rely=0.1, anchor=CENTER)
+
+
+        filter_btn=ctk.CTkButton(Right_frame, command=self.filter, text="Filter", cursor="hand2")
+        filter_btn.place(relx=0.5, rely=0.2, width=300, height=60, anchor=CENTER)
+
         # # # ===========================Table Frame=======================================================
         table_frame=Frame(Right_frame, bd=2, bg="white", relief=RIDGE)
         table_frame.place(relx=0.5, rely=0.9,width=wt/2,height=ht-100,  anchor=S)
@@ -208,6 +239,27 @@ class Attendance:
         self.AttendaceReportTable.delete(*self.AttendaceReportTable.get_children())
         for i in rows:
             self.AttendaceReportTable.insert("",END,values=i)
+
+    # filter data
+    def filter(self):
+        if(self.filter_com.get()=="Roll No"):
+            type = 0
+            data = self.filter_entry.get()
+        elif(self.filter_com.get()=="Date"):
+            type = 3
+            data = self.filter_entry.get()
+        # elif(self.filter_com.get()=="date"):
+        #     type = "date"
+
+        global mydata
+        mydata.clear()
+        with open('attendance.csv','r') as myfile:
+            csvread=csv.reader(myfile,delimiter=",")
+            for i in csvread:
+                if(len(i)>1):
+                    if(i[type] == data):
+                        mydata.append(i)
+            self.fetchData(mydata)
     
     # import csv
     def importCsv(self):    
