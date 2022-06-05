@@ -1,3 +1,4 @@
+from time import strftime
 from tkinter import*
 import customtkinter as ctk
 from PIL import Image, ImageTk
@@ -19,6 +20,9 @@ ctk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
 class Face_Recognition_System_st:
     def __init__(self, root):
+        # print(passt)
+
+        # self.x = a
         self.root=root
 
         # code for full screen height and width --------------------
@@ -79,25 +83,48 @@ class Face_Recognition_System_st:
         # b5_1.place(relx=0.5, rely=0.8,width=320,height=80,  anchor=CENTER)
 
         # Exit button        
-        b6_1=ctk.CTkButton(root, text="Exit", cursor="hand2", command = root.destroy, fg_color="red", text_font=("Verdana", 12))
+        b6_1=ctk.CTkButton(root, text="Exit", cursor="hand2", command = self.iExit, fg_color="red", text_font=("Verdana", 12))
         b6_1.place(relx=0.8, rely=0.8,width=320,height=80,  anchor=CENTER)
 
+
+        # ============= End Lebel and Time ====================
         end_lbl= Label(text="Created By The Indian Coding Club", cursor="hand2")
         end_lbl.configure(font=("Helvetica", 10, "bold italic"), fg="grey")
         end_lbl.place(relx=0.5, rely=0.98, anchor=CENTER)
         end_lbl.bind("<Button-1>", self.openlink)
+
+        # Time ========
+        def time():
+            string = strftime("%H:%M:%S %p")
+            time_lbl.configure(text = string)
+            time_lbl.after(1000, time)
+
+        time_lbl = ctk.CTkLabel(root)
+        time_lbl.configure(font=("Verdana", 15))
+        time_lbl.place(relx=0.8, rely=0.98, anchor=CENTER)
+        time()
 
     def openlink(*args):
         webbrowser.open_new_tab("https://www.google.com")
 
     #==========Functions buttons for Student=======================
     def student_details(self):
+        print(self.x)
         self.new_window=Toplevel(self.root)
-        self.app=Student_st(self.new_window)
+        self.app=Student_st(self.new_window,self.x)
 
     # # =============Function button for Photos====================
     # def open_photos(self):
     #     os.startfile("data")
+
+
+    # # ============ Exit Function +++++++++++++++++++++
+    def iExit(self):
+        self.iExit=messagebox.askyesno("Warning","Are you sure want to Exit?", parent=self.root)
+        if self.iExit > 0:
+            self.root.destroy()
+        else:
+            return
         
     # =============Function button for Train Data====================
     def train_data(self):
@@ -132,7 +159,7 @@ class Face_Recognition_System_st:
         d1=now.strftime ("%d/%m/%Y")
         dtString=now.strftime("%H:%M:%S")
         try:
-            conn=mysql.connector.connect(host="localhost", username="root", password="Subhadip@321#", database="face_recognition")
+            conn=mysql.connector.connect(host="localhost", username="root", password="t00r", database="face_recognition")
             my_cursor=conn.cursor()
             my_cursor.execute("insert into attendance values(%s,%s,%s,%s,%s,%s)",(i,n,d,d1,dtString,sta))
             conn.commit()
@@ -168,7 +195,7 @@ class Face_Recognition_System_st:
                 id,predict=clf.predict(gray_image[y:y+h,x:x+w]) 
                 confidence=int((100*(1-predict/300)))
                 
-                conn=mysql.connector.connect(host="localhost", username="root", password="Subhadip@321#", database="face_recognition")
+                conn=mysql.connector.connect(host="localhost", username="root", password="t00r", database="face_recognition")
                 my_cursor=conn.cursor()
                 my_cursor.execute("select name from student where roll="+str(id)) 
                 n=my_cursor.fetchone()

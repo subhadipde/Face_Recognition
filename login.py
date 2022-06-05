@@ -1,5 +1,5 @@
 from tkinter import*
-from colorama import Cursor
+# from colorama import Cursor
 import customtkinter as ctk
 from tkinter import ttk
 from PIL import Image,ImageTk
@@ -101,7 +101,7 @@ class Login_window:
         registerbtn.place(relx=0.2, rely=0.85, anchor=CENTER)
 
         # forgetpasswordButton
-        forgetbtn = ctk.CTkButton(frame,text="Forget Password",cursor="hand2",command=self.register_window,text_font=("Verdana",8))
+        forgetbtn = ctk.CTkButton(frame,text="Forget Password",cursor="hand2",command=self.forgot_password_window,text_font=("Verdana",8))
         forgetbtn.place(relx=0.2, rely=0.92, anchor=CENTER)
 
 
@@ -115,13 +115,14 @@ class Login_window:
         elif self.txtuser.get() == "admin" and self.txtpass.get() == "admin":
             open_main=messagebox.askyesno("YesNo","Acess only Admin")
             if open_main>0:
+                
                 self.new_window=Toplevel(self.root_login)
                 self.app=Face_Recognition_System(self.new_window)
             else:
                 if not open_main:
                     return
         else:
-            conn=mysql.connector.connect(host="localhost", username="root", password="Subhadip@321#", database="face_recognition")
+            conn=mysql.connector.connect(host="localhost", username="root", password="t00r", database="face_recognition")
             my_cursor=conn.cursor()
             my_cursor.execute("select * from register where email=%s and password=%s",(
                                                                                     self.txtuser.get(),
@@ -133,8 +134,9 @@ class Login_window:
             else:
                 open_main=messagebox.askyesno("YesNo","Acess only Student")
                 if open_main>0:
+                    passIt = "Done"
                     self.new_window=Toplevel(self.root_login)
-                    self.app=Face_Recognition_System_st(self.new_window)
+                    self.app=Face_Recognition_System_st(self.new_window,passIt)
                 else:
                     if not open_main:
                         return
@@ -151,7 +153,7 @@ class Login_window:
         elif self.txt_newpassword.get()=="":
                 messagebox.showerror("Error","please enter your new password",parent=self.root2) 
         else:
-            conn=mysql.connector.connect(host="localhost", username="root", password="Subhadip@321#", database="face_recognition")
+            conn=mysql.connector.connect(host="localhost", username="root", password="t00r", database="face_recognition")
             my_cursor=conn.cursor()
             query=("select * from register where email=%s and securityQ=%s and securityA=%s")
             value=(self.txtuser.get(),self.combo_security_Q.get(),self.txt_security.get())
@@ -174,7 +176,7 @@ class Login_window:
         if self.txtuser.get()=="":
             messagebox.showerror("Error","please enter the Username to Reset Password")
         else:
-            conn=mysql.connector.connect(host="localhost", username="root", password="Subhadip@321#", database="face_recognition")
+            conn=mysql.connector.connect(host="localhost", username="root", password="t00r", database="face_recognition")
             my_cursor=conn.cursor()
             query=("select * from register where email=%s")
             value=(self.txtuser.get(),)
@@ -188,31 +190,35 @@ class Login_window:
                 self.root2.title("Forget password")
                 self.root2.geometry("340x450+610+170")
 
-                l=Label(self.root2,text="Forget Password",font=("times new roman", 20, "bold"),bg="white", fg="red")
-                l.place(x=0,y=10,relwidth=1)
+                l= ctk.CTkLabel(self.root2,text="Reset Password")
+                l.configure(font=("times new roman", 18, "bold"), fg="red")
+                l.place(relx=0.5, rely=0.05, anchor=CENTER)
 
-                security_Q = Label(self.root2, text="Select Security Question", font=("times new roman", 15, "bold"), bg="white")
-                security_Q.place(x=50, y=80)
+                security_Q = ctk.CTkLabel(self.root2, text="Select Security Question")
+                security_Q.configure(font=("times new roman", 12), fg="black")
+                security_Q.place(relx=0.5, rely=0.2, anchor=CENTER)
 
-                self.combo_security_Q = ttk.Combobox(self.root2, font=("times new roman", 15, "bold"), state="readonly")
+                self.combo_security_Q = ttk.Combobox(self.root2, font=("times new roman", 12, "bold"), state="readonly")
                 self.combo_security_Q["values"] = ("Select", "Your Birth place", "your dad name", "your mother name")
-                self.combo_security_Q.place(x=50, y=110, width=250)
+                self.combo_security_Q.place(relx=0.5, rely=0.3, anchor=CENTER, width=200)
                 self.combo_security_Q.current(0)
 
-                security_A = Label(self.root2, text="Security Answer", font=("times new roman", 15, "bold"), bg="white")
-                security_A.place(x=50, y=150)
+                security_A = ctk.CTkLabel(self.root2, text="Security Answer")
+                security_A.configure(font=("times new roman", 12), fg="black")
+                security_A.place(relx=0.5, rely=0.4, anchor=CENTER)
 
-                self.txt_security = ttk.Entry(self.root2, font=("times new roman", 15))
-                self.txt_security.place(x=50, y=180, width=250)
+                self.txt_security = ctk.CTkEntry(self.root2)
+                self.txt_security.place(relx=0.5, rely=0.5, anchor=CENTER, width=250)
 
-                new_password = Label(self.root2, text="New password", font=("times new roman", 15, "bold"), bg="white")
-                new_password.place(x=50, y=220)
+                new_password = ctk.CTkLabel(self.root2, text="New password")
+                new_password.configure(font=("times new roman", 12), fg="black")
+                new_password.place(relx=0.5, rely=0.6, anchor=CENTER)
 
-                self.txt_newpassword = ttk.Entry(self.root2, font=("times new roman", 15))
-                self.txt_newpassword.place(x=50, y=250, width=250)
+                self.txt_newpassword = ctk.CTkEntry(self.root2)
+                self.txt_newpassword.place(relx=0.5, rely=0.7, anchor=CENTER, width=250)
 
-                btn=Button(self.root2,text="Reset",command=self.reset_pass,font=("times new roman", 15, "bold"), bg="orange",fg="green")
-                btn.place(x=100,y=300)
+                btn = ctk.CTkButton(self.root2,text="Reset",command=self.reset_pass, fg_color="green")
+                btn.place(relx=0.5, rely=0.85, anchor=CENTER)
 
 
 if __name__ == "__main__":
